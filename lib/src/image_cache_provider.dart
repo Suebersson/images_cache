@@ -1,11 +1,11 @@
 import 'dart:io' show File;
-import 'dart:ui' show Codec, Image;
+import 'dart:ui' as ui;
 import 'dart:typed_data' show Uint8List;
 import 'package:flutter/foundation.dart'
     show DiagnosticsProperty, DiagnosticsTreeStyle, SynchronousFuture;
 import 'package:flutter/widgets.dart' hide Image;
 import 'package:files_cache/files_cache.dart' show FilesCache;
-import 'package:dart_dev_utils/dart_dev_utils.dart' show Functions;
+import 'package:dart_dev_utils/dart_dev_utils.dart' show dartDevUtils;
 
 class ImageCacheProvider extends ImageProvider<ImageCacheProvider>
     with FilesCache {
@@ -28,22 +28,20 @@ class ImageCacheProvider extends ImageProvider<ImageCacheProvider>
     this.allowUpscaling = false,
   }) : assert(url.isNotEmpty, "---- Insira o enderço da URL ----");
 
-  Future<Codec> _getImageCodec() async {
-    assert(Functions.i.isNetworkURL(url: url),
-        'Insira uma url válida: https, http');
+  Future<ui.Codec> _getImageCodec() async {
+    assert(
+        dartDevUtils.isNetworkURL(url), 'Insira uma url válida: https, http');
+
     return await getBytesData(url: url, fileDurationTime: imageDuration)
         .then((uint8List) {
-      return PaintingBinding.instance!.instantiateImageCodec(
+      //ui.ImmutableBuffer.fromUint8List(uint8List)
+      return ui.instantiateImageCodec(
         uint8List,
-        cacheWidth: width,
-        cacheHeight: height,
+        targetWidth: width,
+        targetHeight: height,
         allowUpscaling: allowUpscaling!,
       );
-    }); /*.whenComplete(() {
-      //PaintingBinding.instance!.imageCache?.clear();
-      //PaintingBinding.instance!.imageCache?.clearLiveImages();//limpar imagens em cache sendo exibidas
-      print('Imagens em cache sendo exibidas: ${PaintingBinding.instance?.imageCache?.liveImageCount}');
-    });*/
+    });
   }
 
 /*
@@ -60,6 +58,7 @@ class ImageCacheProvider extends ImageProvider<ImageCacheProvider>
 
   @override
   ImageStreamCompleter load(ImageCacheProvider key, DecoderCallback decode) {
+    //ImageStreamCompleter loadBuffer(ImageCacheProvider key, DecoderBufferCallback decode) { // Flutter >= 3.0.0
     return MultiFrameImageStreamCompleter(
         codec: key._getImageCodec(),
         scale: key.scale ?? 1.0,
@@ -76,10 +75,10 @@ class ImageCacheProvider extends ImageProvider<ImageCacheProvider>
     return SynchronousFuture<ImageCacheProvider>(this);
   }
 
-  static Future<Image> image(
+  static Future<ui.Image> image(
       {required String url, Duration? imageDuration}) async {
-    assert(Functions.i.isNetworkURL(url: url),
-        'Insira uma url válida: https, http');
+    assert(
+        dartDevUtils.isNetworkURL(url), 'Insira uma url válida: https, http');
 
     return await FilesCache()
         .getBytesData(url: url, fileDurationTime: imageDuration)
@@ -88,16 +87,16 @@ class ImageCacheProvider extends ImageProvider<ImageCacheProvider>
 
   static Future<Uint8List> bytesData(
       {required String url, Duration? imageDuration}) async {
-    assert(Functions.i.isNetworkURL(url: url),
-        'Insira uma url válida: https, http');
+    assert(
+        dartDevUtils.isNetworkURL(url), 'Insira uma url válida: https, http');
 
     return FilesCache().getBytesData(url: url, fileDurationTime: imageDuration);
   }
 
   static Future<File> file(
       {required String url, Duration? imageDuration}) async {
-    assert(Functions.i.isNetworkURL(url: url),
-        'Insira uma url válida: https, http');
+    assert(
+        dartDevUtils.isNetworkURL(url), 'Insira uma url válida: https, http');
 
     return FilesCache().getFile(url: url, fileDurationTime: imageDuration);
   }

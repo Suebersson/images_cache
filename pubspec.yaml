@@ -1,6 +1,6 @@
 name: images_cache
 description: Package criada para otimizar o carregamento de imagens no dispositivo armazenadas em cache.
-version: 1.0.0
+version: 1.0.3
 homepage: https://github.com/Suebersson/images_cache.git
 repository: https://github.com/Suebersson/images_cache
 
@@ -19,8 +19,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  files_cache: ^1.0.0
-  dart_dev_utils: ^1.0.6
+  files_cache: ^1.0.1
+  dart_dev_utils: ^1.1.0
 
 dev_dependencies:
   flutter_test:
